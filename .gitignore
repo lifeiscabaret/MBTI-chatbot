@@ -1,0 +1,6 @@
+__pycache__/
+.env
+split_output.txt
+~$MBTI.docx
+.DS_Store
+*.pyc
