@@ -21,14 +21,14 @@ st.markdown("<h1 style='text-align: center; color: pink;'>🎀MBTI 챗봇🎀</h
 # 고정 소개글 자리 확보
 intro_container = st.empty()
 
-# ✨ 소개글 HTML 생성 함수
+# 소개글 HTML 생성 함수
 def generate_intro_html(lines):
     return '\n'.join(
         f"<p style='text-align: center; font-size: 18px; color: #444;'>{line}</p>"
         for line in lines
     )
 
-# ✅ 애니메이션 + 고정 출력
+# 애니메이션 + 고정 출력
 if not st.session_state['intro_shown']:
     full_html = ""
     for line in INTRO_LINES:
@@ -45,21 +45,21 @@ if not st.session_state['intro_shown']:
 else:
     intro_container.markdown(generate_intro_html(INTRO_LINES), unsafe_allow_html=True)
 
-# 🌐 session_id 관리
+# session_id 관리
 query_params = st.query_params
 session_id = query_params.get('session_id', str(uuid.uuid4()))
 st.query_params.update({'session_id': session_id})
 st.session_state.setdefault('session_id', session_id)
 
-# 💬 메시지 리스트 초기화
+# 메시지 리스트 초기화
 st.session_state.setdefault('message_list', [])
 
-# 💬 이전 채팅 렌더링
+# 이전 채팅 렌더링
 for message in st.session_state.message_list:
     with st.chat_message(message['role']):
         st.write(message['content'])
 
-# 💬 사용자 입력 + 답변
+# 사용자 입력 + 답변
 if user_question := st.chat_input("mbti에 대해서 궁금한점을 질문하세요:)"):
     with st.chat_message('user'):
         st.write(user_question)
