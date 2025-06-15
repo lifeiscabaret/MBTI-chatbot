@@ -1,17 +1,48 @@
 import streamlit as st
 import uuid
 from llm import stream_ai_message
+import time
 
-# 페이지 설정
-st.set_page_config(page_title="🎀MBTI 챗봇🎀", page_icon="🩷", layout="centered")
 
-# 핑크 타이틀 + 소개
-st.markdown("""
-    <h1 style='text-align: center; color: pink;'>🎀MBTI 챗봇🎀</h1>
-    <p style='text-align: center;'>안녕하세요. MBTI 챗봇에 오신 것을 환영합니다.<br>
-    궁금했던 나의 성향, 연애 스타일, 업무 스타일, 궁합까지 알려드릴게요!</p>
-""", unsafe_allow_html=True)
+# 초기 상태
+if 'intro_shown' not in st.session_state:
+    st.session_state['intro_shown'] = False
 
+# 타이틀
+st.markdown("<h1 style='text-align: center; color: pink;'>🎀MBTI 챗봇🎀</h1>", unsafe_allow_html=True)
+
+# 소개글 리스트
+lines = [
+    "💬안녕하세요.",
+    "MBTI 챗봇에 오신 것을 환영합니다.",
+    "궁금했던 나의 성향, 연애 스타일, 업무 스타일, 궁합까지 알려드릴게요!"
+]
+
+# 🎯 고정 소개글 자리 확보
+intro_container = st.empty()
+
+# ✅ 처음 한 번만 애니메이션 + 이후에는 고정 텍스트로 덮어쓰기
+if not st.session_state['intro_shown']:
+    full_html = ""
+    for line in lines:
+        text = ""
+        for char in line:
+            text += char
+            html = f"<p style='text-align: center; font-size: 18px; color: #444;'>{text}</p>"
+            intro_container.markdown(full_html + html, unsafe_allow_html=True)
+            time.sleep(0.03)
+        full_html += f"<p style='text-align: center; font-size: 18px; color: #444;'>{line}</p>\n"
+        time.sleep(0.3)
+
+    # 애니메이션 후 고정 출력
+    intro_container.markdown(full_html, unsafe_allow_html=True)
+    st.session_state['intro_shown'] = True
+else:
+    # 이미 본 경우, 고정 출력
+    full_html = ""
+    for line in lines:
+        full_html += f"<p style='text-align: center; font-size: 18px; color: #444;'>{line}</p>\n"
+    intro_container.markdown(full_html, unsafe_allow_html=True)
 ## URL의 parameter에 session_id 저장 ===============================================
 query_params = st.query_params
 
