@@ -1,27 +1,28 @@
 import os
-
 from dotenv import load_dotenv
+
 from langchain.chains import (create_history_aware_retriever,
                               create_retrieval_chain)
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate, FewShotPromptTemplate
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone
 
+from config import answer_examples
 
-## 환경변수 읽어오기 =====================================================
+## 환경변수 읽어오기
 load_dotenv()
 
-## LLM 생성 =========================================================
+## LLM 생성 
 def get_llm(model='gpt-4o'):
     llm = ChatOpenAI(model=model)
     return llm
 
-## Embedding 설정 + Vector Stroe Index 가져오기 ======================================================
+## Embedding 설정 + Vector Stroe Index 가져오기 
 def get_database():
     PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
 
@@ -38,9 +39,7 @@ def get_database():
 
     return database
 
-
-## 세션별 히스토리 저장 ===================================================
- 
+## 세션별 히스토리 저장 
 store = {}
 
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
@@ -48,30 +47,18 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
         store[session_id] = ChatMessageHistory()
     return store[session_id]
 
-## 히스토리 기반 리트리버 ========================================================
+## 히스토리 기반 리트리버
 def get_history_retriever(llm, retriever):
-    contextualize_q_system_prompt = (
-        "Given a chat history and the latest user question "
-        "which might reference context in the chat history, "
-        "formulate a standalone question which can be understood "
-        "without the chat history. Do NOT answer the question, "
-        "just reformulate it if needed and otherwise return it as is."
-    )
+    contextualize_q_prompt = ChatPromptTemplate.from_messages([
+        ("system", "Given a chat history and the latest user question which might reference context in the chat history, "
+        "formulate a standalone question which can be understood without the chat history. Do NOT answer the question, "
+        "just reformulate it if needed and otherwise return it as is."),
+        MessagesPlaceholder("chat_history"),
+        ("human", "{input}"),
+    ])
+    return create_history_aware_retriever(llm, retriever, contextualize_q_prompt)
 
-    contextualize_q_prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", contextualize_q_system_prompt),
-            MessagesPlaceholder("chat_history"),
-            ("human", "{input}"),
-        ]
-    )
-
-    history_aware_retriever = create_history_aware_retriever(
-        llm, retriever, contextualize_q_prompt
-    )
-
-    return history_aware_retriever
-
+# QA 프롬프트 정의
 def get_qa_prompt() :
     system_prompt = (
     '''[identity]
@@ -85,26 +72,18 @@ def get_qa_prompt() :
 '''    
     )
 
-
-    ## few-shot ##########################################################
-    from langchain_core.prompts import PromptTemplate
-    from langchain_core.prompts import FewShotPromptTemplate
-    from config import answer_examples
+ ## few-shot 
     example_prompt = PromptTemplate.from_template("질문: {input}\n\n답변: {answer}")
-
-    ######################################################################
-
     
     few_shot_prompt = FewShotPromptTemplate(
-        examples=answer_examples, ## 질문/답변 예시들 (전체 type은 list, 각 질문/답변 type은 dict)
-        example_prompt=example_prompt, ## 단일 예시 포맷
+        examples=answer_examples, 
+        example_prompt=example_prompt, 
         prefix='다음 질문에 답변하세요 : ',
         suffix="Question: {input}",
         input_variables=["input"],
     )
 
     formmated_few_shot_prompt = few_shot_prompt.format(input='{input}')
-    ######################################################################
 
     qa_prompt = ChatPromptTemplate.from_messages(
         [
@@ -116,42 +95,14 @@ def get_qa_prompt() :
     )
     return qa_prompt
 
-## retrievalQA 함수 정의 =================================================
+## retrievalQA 함수 정의 
 def build_conversational_chain():
-    LANGCHAIN_API_KEY = os.getenv('LANGCHAIN_API_KEY')
-    
-    ## LLM 모델 지정
     llm = get_llm()
-    
-    ## vector store에서 index 정보
     database = get_database()
-    retriever = database.as_retriever(search_kwargs={"k": 2}) #벡터 DB에서  문서를 불러오는데, 2개만 불러오기
+    retriever = database.as_retriever(search_kwargs={"k": 2}) 
 
     history_aware_retriever = get_history_retriever(llm, retriever)
     qa_prompt = get_qa_prompt()
-
-    contextualize_q_system_prompt = (
-        "Given a chat history and the latest user question "
-        "which might reference context in the chat history, "
-        "formulate a standalone question which can be understood "
-        "without the chat history. Do NOT answer the question, "
-        "just reformulate it if needed and otherwise return it as is."
-    )
-
-    contextualize_q_prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", contextualize_q_system_prompt),
-            MessagesPlaceholder("chat_history"),
-            ("human", "{input}"),
-        ]
-    )
-
-    history_aware_retriever = create_history_aware_retriever(
-        llm, retriever, contextualize_q_prompt
-    )
-
-
-  
 
     question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
     rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
@@ -166,9 +117,7 @@ def build_conversational_chain():
 
     return conversational_rag_chain
 
-
-
-## [AI Message 함수 정의] ================================================
+## [AI Message 함수 정의] 
 def stream_ai_message(user_message, session_id='default'):
     qa_chain = build_conversational_chain()
 
@@ -177,7 +126,7 @@ def stream_ai_message(user_message, session_id='default'):
         config={'configurable': {'session_id': session_id}},        
     )
 
-    print(f'대화 이력 >> {get_session_history(session_id)} \n😎\n')
+    print(f'대화 이력 >> {get_session_history(session_id)} \n🦋\n')
     print('=' * 50 + '\n')
     print(f'[session_id 함수 내 출력] session_id >> {session_id}')
 
