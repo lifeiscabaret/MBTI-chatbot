@@ -1,0 +1,38 @@
+{
+  "E": {
+    "definition": "외향형(E)은 사람들과 함께 있을 때 에너지를 얻고, 다양한 사람과 어울리는 상황에서 활력이 넘치는 성격입니다.",
+    "source": "16 Personality Test: In-Depth Analysis of Personality Types, Relationships, and Career Development Advice",
+    "tags": ["성격","외향","사교성"]
+  },
+  "I": {
+    "definition": "내향형(I)은 혼자 있는 시간을 통해 에너지를 회복하며, 조용한 환경과 자기 성찰을 선호합니다.",
+    "source": "16 Personality Test: In-Depth Analysis of Personality Types, Relationships, and Career Development Advice",
+    "tags": ["성격","내향"]
+  },
+  "J": {
+    "definition": "판단형(J)은 계획적이고 체계적인 성향으로, 일정을 미리 정하고 안정적인 구조를 선호합니다.",
+    "source": "16 Personality Test: In-Depth Analysis of Personality Types, Relationships, and Career Development Advice",
+    "tags": ["성격","계획형"]
+  },
+  "P": {
+    "definition": "인식형(P)은 유연하고 즉흥적인 성향으로, 일정이나 계획에 얽매이기보다 자유롭게 상황에 맞춰 움직입니다.",
+    "source": "16 Personality Test: In-Depth Analysis of Personality Types, Relationships, and Career Development Advice",
+    "tags": ["성격","즉흥형"]
+  },
+  "계획형": {
+    "definition": "계획형은 J 유형으로, 일을 미리 계획하고 구조화된 환경을 선호하는 성향을 말합니다.",
+    "source": "16 Personality Test: In-Depth Analysis of Personality Types, Relationships, and Career Development Advice",
+    "tags": ["연애 스타일","업무 스타일"]
+  },
+  "궁합": {
+    "definition": "MBTI 궁합은 성격이 같아서 잘 맞는다기보다 서로의 차이를 이해하고 조율할 수 있는 가능성을 뜻합니다. 예: INFP는 ENFJ와 궁합이 좋습니다.",
+    "source": "16 Personality Test: In-Depth Analysis of Personality Types, Relationships, and Career Development Advice",
+    "tags": ["궁합","연애 스타일"]
+  },
+  "MBTI란?": {
+    "definition": "MBTI는 'Myers-Briggs Type Indicator'의 줄임말로, 성격 유형을 16가지로 구분한 성격 유형 검사입니다.📜 MBTI는 네 가지 이분법적인 지표(E-I, S-N, T-F, J-P)를 조합해 사람의 성격을 이해하고 분석합니다. 예를 들어 'ENFP'는 외향형(E), 직관형(N), 감정형(F), 인식형(P)을 의미합니다. 이 테스트는 개인의 성격 특성, 대인관계 스타일, 연애 경향, 업무 스타일 등을 파악하는 데 도움을 줍니다. \n단순한 심리 테스트를 넘어, 자기이해와 타인이해의 도구로 널리 활용되고 있습니다.",
+    "source": "mbti 성격.txt, mbti 연애 스타일.txt, mbti 궁합.txt, mbti 업무 스타일.txt",
+    "tags": ["개념", "성격유형검사", "정의", "MBTI란"]
+  }
+
+}
