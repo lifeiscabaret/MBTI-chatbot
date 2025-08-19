@@ -1,6 +1,6 @@
 # 💬 MBTI Chatbot
 
-![MBTI Chatbot Banner](./assets/MBTI Chatbot Banner.png) 
+![MBTI Chatbot Banner]("./assets/MBTI Chatbot Banner.png")
 
 > **RAG + Streamlit 기반 MBTI 챗봇**  
 > Pinecone + OpenAI API를 활용하여 MBTI 성격/연애/업무 스타일을 대화형으로 분석하고 대화할 수 있는 웹 애플리케이션입니다.
