@@ -2,8 +2,9 @@ import os
 import json
 from dotenv import load_dotenv
 
-from langchain.chains import (create_history_aware_retriever,
-                              create_retrieval_chain)
+from langchain.chains import create_retrieval_chain
+from langchain.chains.history_aware_retriever import create_history_aware_retriever
+
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
@@ -157,7 +158,7 @@ def stream_ai_message(user_message, session_id='default'):
     print(f'[session_id 함수 내 출력] session_id >> {session_id}')
 ####################################################################
 # vector store에서 검색된 문서 출력
-    retriever = load_vectorstore().as_retriever(search_kwars={'k':1})
+    retriever = load_vectorstore().as_retriever(search_kwargs={'k': 1})
     search_results = retriever.invoke(user_message)
 
     print(f'\nPinecone 검색 결과 >> \n{search_results[0].page_content[:100]}')
