@@ -1,5 +1,6 @@
 import os
 import json
+import pinecone
 from dotenv import load_dotenv
 
 from langchain.chains import create_retrieval_chain
@@ -12,7 +13,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, Prom
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
-from pinecone import Pinecone
+
 
 from config import answer_examples
 
@@ -35,7 +36,7 @@ def load_vectorstore():
 
     ## 임베딩 모델 지정
     embedding = OpenAIEmbeddings(model='text-embedding-3-large')
-    Pinecone(api_key=PINECONE_API_KEY)
+    pinecone.init(api_key=PINECONE_API_KEY, environment=os.getenv("PINECONE_ENV"))
     index_name = 'mbti'
 
     ## 저장된 인덱스 가져오기
