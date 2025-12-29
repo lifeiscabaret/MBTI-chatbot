@@ -1,6 +1,6 @@
 import os
 import json
-import pinecone
+
 from dotenv import load_dotenv
 
 from langchain.chains import create_retrieval_chain
@@ -13,7 +13,6 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, Prom
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
-
 
 from config import answer_examples
 
@@ -30,21 +29,14 @@ def get_llm(model='gpt-4o'):
     llm = ChatOpenAI(model=model)
     return llm
 
-## Embedding 설정 + Vector Stroe Index 가져오기 
 def load_vectorstore():
-    PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
-
-    ## 임베딩 모델 지정
     embedding = OpenAIEmbeddings(model='text-embedding-3-large')
-    pinecone.init(api_key=PINECONE_API_KEY, environment=os.getenv("PINECONE_ENV"))
     index_name = 'mbti'
 
-    ## 저장된 인덱스 가져오기
     database = PineconeVectorStore.from_existing_index(
         index_name=index_name,
         embedding=embedding,
     )
-
     return database
 
 ## 세션별 히스토리 저장 
@@ -84,7 +76,7 @@ def build_qa_prompt() :
 
 
     system_prompt = (
-    '''[identity]
+        '''[identity]
 - 당신은 친절하고 유쾌한 MBTI 분석가입니다. 친구처럼 대화해주세요!
 - [context]와 [keyword_dictionary]를 참고해 사용자의 질문에 6줄 이상으로 성의있게 답변하세요.
 - 문장이 짧지 않도록 문단 단위로 답변해주세요.
