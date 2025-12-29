@@ -1,8 +1,8 @@
-streamlit==1.36.0
+streamlit>=1.36.0
 
 langchain==0.3.27
 langchain-community==0.3.27
-langchain-openai==0.3.0
+langchain-openai>=0.3.11,<0.4.0
 langchain-pinecone==0.2.11
 
 pinecone==7.3.0
