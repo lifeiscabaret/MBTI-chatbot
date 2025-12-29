@@ -3,7 +3,7 @@ import json
 
 from dotenv import load_dotenv
 
-from langchain.chains import create_retrieval_chain
+from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -19,10 +19,6 @@ from config import answer_examples
 ## 환경변수 읽어오기
 load_dotenv()
 
-
-## JSON 딕셔너리 불러오기
-with open("keyword_dictionary.json", "r", encoding="utf-8") as f:
-    keyword_dict = json.load(f)
 
 ## LLM 생성 
 def get_llm(model='gpt-4o'):
@@ -90,7 +86,7 @@ def build_qa_prompt() :
 '''    
     )
 
- ## few-shot 
+    ## few-shot 
     example_prompt = PromptTemplate.from_template("질문: {input}\n\n답변: {answer}")
     
     few_shot_prompt = FewShotPromptTemplate(
@@ -154,7 +150,10 @@ def stream_ai_message(user_message, session_id='default'):
     retriever = load_vectorstore().as_retriever(search_kwargs={'k': 1})
     search_results = retriever.invoke(user_message)
 
-    print(f'\nPinecone 검색 결과 >> \n{search_results[0].page_content[:100]}')
+    if search_results:
+        print(f'\nPinecone 검색 결과 >> \n{search_results[0].page_content[:100]}')
+    else:
+        print('\nPinecone 검색 결과 없음\n')
 ######################################################################
 
     return ai_message

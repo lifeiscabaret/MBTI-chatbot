@@ -1,13 +1,13 @@
-streamlit>=1.36.0
+streamlit==1.36.0
 
-langchain>=0.3.27
-langchain-community>=0.3.27
-langchain-core>=0.3.35
-langchain-openai>=0.3.0
-langchain-pinecone>=0.2.11
+langchain==0.3.27
+langchain-community==0.3.27
+langchain-core==0.3.35
+langchain-openai==0.3.0
+langchain-pinecone==0.2.11
 
-pinecone>=7.3.0
-openai>=1.40.0
+pinecone==7.3.0
+openai==1.40.0
 
-python-dotenv>=1.0.1
+python-dotenv==1.0.1
 tiktoken
